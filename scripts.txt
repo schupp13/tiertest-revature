@@ -1,0 +1,85 @@
+
+-- finding all records with role_id of the value basic user
+select * from app_user au where role_id = (select role_id from user_role ur where ur."name" = 'BASIC_USER');
+
+select * from app_user au ;
+
+select * from user_role ur ;
+
+-- inserting user
+insert into app_user values (17, 'pook', 'password', 'Philip', 'Schultz', 4);
+
+
+select * from app_user left join study_set on  app_user.user_id  = study_set.owner_id where user_id = 4;
+
+--Write a query that will obtain the owner’s username and role name, as well as the category name, questions, and answers of flashcard 
+--contained within the study set with and id of 1.
+
+
+select app_user.user_id ,category."name" as categoryName, flashcard.question, flashcard.answer, app_user.username , category."name" as cat , user_role."name" from flashcard 
+left join category on category.category_id = flashcard.category_id
+left join study_set_card on study_set_card.flashcard_id = flashcard.flashcard_id
+left join study_set on study_set.study_set_id = study_set_card.study_set_id
+left join app_user on app_user.user_id = study_set.owner_id 
+left join user_role on user_role.role_id = app_user.role_id where user_id = 1;
+
+
+
+
+
+CREATE DATABASE tier3;
+
+GRANT ALL PRIVILEGES ON DATABASE "tier3" to pooker;
+
+
+create table app_user(
+	user_id serial primary key,
+	username varchar(200),
+	password varchar(200),
+	first_name varchar(200),
+	last_name varchar(200),
+	role_id integer references user_role(role_id)
+);
+
+
+
+create table user_role(
+role_id serial primary key,
+name varchar(200)
+)
+
+
+create table category(
+category_id serial primary key,
+name varchar(200)
+)
+
+
+create table flashcard(
+flashcard_id serial primary key,
+question varchar(200),
+answer varchar(200),
+category_id integer references category(category_id)
+)
+
+
+create table study_set(
+	study_set_id serial primary key,
+	name varchar(200),
+	owner_id integer references app_user(user_id)
+
+)
+
+create table study_set_card(
+	study_set_id integer references study_set(study_set_id),
+	flashcard_id integer references flashcard(flashcard_id)
+)
+
+
+
+
+
+
+
+
+
